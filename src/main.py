@@ -95,9 +95,15 @@ def main():
 
     # set up obesrvation equation
     G = [
-        [Operable(lambda t: 1), Operable(lambda t: 1), Operable(lambda t: 1)],
-        [Operable(lambda t: 1), Operable(lambda t: 1), Operable(lambda t: 1)],
-        [Operable(lambda t: 1), Operable(lambda t: 1), Operable(lambda t: 1)]
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 1, 1]
+    ]
+
+    y = [
+        Operable(lambda t: t**2),
+        Operable(lambda t: t),
+        Operable(lambda t: 3*t)
     ]
 
     T_START = 0 # T_START - start of time
