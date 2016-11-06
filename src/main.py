@@ -14,7 +14,6 @@ from approximation import solve
 from operable import Operable
 from plot_utils import plot_approximation_result
 
-
 def main():
 # pylint: disable=C0103
     """Entry point for the app."""
@@ -77,8 +76,8 @@ def main():
     ]
     # set up shape matrix for bounding ellipsoid for v(t)
     M = [
-        [Operable(lambda t: t**2+t*16), Operable(lambda t: t**2+t*8)],
-        [Operable(lambda t: t**2+t*8), Operable(lambda t: 4*t**2 + t)]
+        [Operable(lambda t: t**2+t*16 + 1), Operable(lambda t: t**2+t*8)],
+        [Operable(lambda t: t**2+t*8), Operable(lambda t: 4*t**2 + t + 1)]
     ]
 
     w0 = [
@@ -95,9 +94,9 @@ def main():
 
     # set up obesrvation equation
     G = [
-        [1, 1, 1],
-        [1, 1, 1],
-        [1, 1, 1]
+        [1, 1, 1, 1],
+        [1, 1, 1, 1],
+        [1, 1, 1, 1]
     ]
 
     y = [
@@ -106,12 +105,28 @@ def main():
         Operable(lambda t: 3*t)
     ]
 
+    mu = 16000 # mu = 4
+
     T_START = 0 # T_START - start of time
     T_END = 10  # T_END - end of time
     T_COUNT = 50  # T_COUNT - number of timestamps on [t_start, t_end]
 
-    t_array, center, shape_matrix = solve(A, A0, P0, C, M, T_START, T_END, T_COUNT)
-    plot_approximation_result(t_array, center, shape_matrix, [0, 1], 'T', 'Y1', 'Y2')
+    # tt = np.linspace(T_START, T_END, T_COUNT)
+    # mm = np.all([np.all(np.linalg.eigvals(calc_in_time_point(M, time)) > 0) for time in tt])
+    # nn = np.all([np.all(np.linalg.eigvals(calc_in_time_point(N, time)) > 0) for time in tt])
+    # print(mm)
+    # print(nn)
+
+    # plot_matr(tt, v0, M, 2, [0, 1])
+    # plot_matr(tt, w0, N, 2, [0, 1])
+    t_array, x, P, error_func = solve(A, A0, P0, C, M, N, y, G, v0, w0, mu, n, T_START, T_END, T_COUNT)
+
+    # P = np.delete(P, 0, 0)
+    # x = np.delete(x, 0, 0)
+    # t_array = np.delete(t_array, 0)
+    plot_approximation_result(t_array, x, P, [0, 1], 'T', 'Y1', 'Y2')
+    for time in t_array:
+        print(error_func(time))
 
 
 main()

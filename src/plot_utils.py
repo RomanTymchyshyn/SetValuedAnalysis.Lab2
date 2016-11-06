@@ -7,6 +7,7 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 
 from utils import project_ellipsoid_to_subspace
+# from approximation import calc_in_time_point
 
 
 def _get_ellipse_points(center, shape_matrix, number_of_points):
@@ -38,6 +39,8 @@ def _get_ellipse_points(center, shape_matrix, number_of_points):
 
 def plot_2d_ellipse_in_3d_space(axes_3d, center, shape, time_point):
     """Plot ellipse given by center and shape matrix in some time point."""
+    if not np.all(np.linalg.eigvals(shape) > 0):
+        return
     number_of_points = 25
     x_array, y_array = _get_ellipse_points(center, shape, number_of_points)
     t_array = [time_point for _ in range(number_of_points)]
@@ -73,3 +76,23 @@ def plot_approximation_result(t_array, center_array, shape_matrix_array, coordin
         plot_2d_ellipse_in_3d_space(axes, center, shape_matrix, t_array[t])
 
     plt.show()
+
+
+# def plot_matr(t_array, center_func, shape_func, dimension, coordinates, x_label='T', y_label='Y1', z_label='Y2'):
+#     """"""
+
+#     fig = plt.figure()
+#     axes = Axes3D(fig)
+#     axes.set_xlabel(x_label)
+#     axes.set_ylabel(y_label)
+#     axes.set_zlabel(z_label)
+
+#     for time in t_array:
+#         center = calc_in_time_point(center_func, time)
+#         shape = calc_in_time_point(shape_func, time)
+#         if dimension > len(coordinates):
+#             center, shape = project_ellipsoid_to_subspace(center,\
+#                 shape, dimension, coordinates)
+#         plot_2d_ellipse_in_3d_space(axes, center, shape, time)
+
+#     plt.show()
