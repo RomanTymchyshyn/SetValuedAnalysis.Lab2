@@ -64,6 +64,79 @@ def calc_in_time_point(matrix, time):
     op = np.vectorize(lambda el: Operable(el)(time), otypes=[np.float])
     return op(matrix)
 
+# def find_R(A, P0, C, M, G, N, n, t_array):
+#     """Returns matrix R(s)."""
+#     G_t = np.transpose(G)
+#     GNG = np.dot(G_t, N)
+#     GNG = np.dot(GNG, G)
+#     def diff(func, time):
+#         """Describes system of equations.
+
+#         Returns array of values - value of system in given time point."""
+#         R = array_to_matrix(func, n, n)
+#         AR = np.dot(A, R)
+#         AR = calc_in_time_point(AR, time)
+
+#         A_t = np.transpose(A)
+#         RA = np.dot(R, A_t)
+#         RA = calc_in_time_point(RA, time)
+
+#         M_inv = calc_in_time_point(M, time)
+#         M_inv = np.linalg.inv(M_inv)
+
+#         C_time = calc_in_time_point(C, time)
+#         CMC = np.dot(C_time, M_inv)
+#         CMC = np.dot(CMC, np.transpose(C_time))
+
+#         GNG_time = calc_in_time_point(GNG, time)
+#         RGNGR = np.dot(R, GNG_time)
+#         RGNGR = np.dot(RGNGR, R)
+
+#         res = np.add(AR, RA)
+#         res = np.add(res, CMC)
+#         res = np.subtract(res, RGNGR)
+#         # res = calc_in_time_point(res, time)
+#         res = matrix_to_array(res)
+#         return res
+#     initial_condition = np.linalg.inv(P0)
+#     initial_condition = matrix_to_array(initial_condition)
+#     sol = odeint(diff, initial_condition, t_array)
+#     shape_matrix = solution_to_matrix_form(sol, n, n, np.shape(t_array)[0])
+#     return shape_matrix
+
+
+# def find_x(A, a, C, G, N, y, v0, w0, R, t_array):
+#     """Returns estimation of x."""
+#     y_w0_dif = np.subtract(y, w0)
+#     GN = np.dot(np.transpose(G), N)
+#     Cv0 = np.dot(C, v0)
+#     def system(x, time):
+#         """Describes system of equations."""
+#         A_time = calc_in_time_point(A, time)
+#         Ax = np.dot(A_time, x)
+
+#         G_time = calc_in_time_point(G, time)
+#         Gx = np.dot(G_time, x)
+
+#         R_time = get_value_from_discrete_solution(R, time, t_array)
+
+#         GN_time = calc_in_time_point(GN, time)
+#         RGN = np.dot(R_time, GN_time)
+
+#         y_w0_dif_time = calc_in_time_point(y_w0_dif, time)
+#         temp = np.subtract(y_w0_dif_time, Gx)
+
+#         RGN = np.dot(RGN, temp)
+
+#         Cv0_time = calc_in_time_point(Cv0, time)
+
+#         res = np.add(Ax, RGN)
+#         res = np.add(res, Cv0_time)
+#         return res
+#     sol = odeint(system, a, t_array)
+#     return sol
+
+
 def find_R(A, P0, C, M, G, N, n, t_array):
     """Returns matrix R(s)."""
     G_t = np.transpose(G)
@@ -73,13 +146,15 @@ def find_R(A, P0, C, M, G, N, n, t_array):
         """Describes system of equations.
 
         Returns array of values - value of system in given time point."""
-        R = array_to_matrix(func, n, n)
-        AR = np.dot(A, R)
-        AR = calc_in_time_point(AR, time)
+        P = array_to_matrix(func, n, n)
+        PA = np.dot(P, A)
+        PA = calc_in_time_point(PA, time)
+        PA = np.dot(-1, PA)
 
         A_t = np.transpose(A)
-        RA = np.dot(R, A_t)
-        RA = calc_in_time_point(RA, time)
+        AP = np.dot(A_t, P)
+        AP = calc_in_time_point(AP, time)
+        AP = np.dot(-1, AP)
 
         M_inv = calc_in_time_point(M, time)
         M_inv = np.linalg.inv(M_inv)
@@ -87,25 +162,26 @@ def find_R(A, P0, C, M, G, N, n, t_array):
         C_time = calc_in_time_point(C, time)
         CMC = np.dot(C_time, M_inv)
         CMC = np.dot(CMC, np.transpose(C_time))
+        PCMC = np.dot(P, CMC)
+        PCMCP = np.dot(PCMC, P)
+        PCMCP = np.dot(-1, PCMCP)
 
         GNG_time = calc_in_time_point(GNG, time)
-        RGNGR = np.dot(R, GNG_time)
-        RGNGR = np.dot(RGNGR, R)
 
-        res = np.add(AR, RA)
-        res = np.add(res, CMC)
-        res = np.subtract(res, RGNGR)
+        res = np.add(PA, AP)
+        res = np.add(res, PCMCP)
+        res = np.add(res, GNG_time)
         # res = calc_in_time_point(res, time)
         res = matrix_to_array(res)
         return res
-    initial_condition = np.linalg.inv(P0)
+    initial_condition = P0
     initial_condition = matrix_to_array(initial_condition)
     sol = odeint(diff, initial_condition, t_array)
     shape_matrix = solution_to_matrix_form(sol, n, n, np.shape(t_array)[0])
     return shape_matrix
 
 
-def find_x(A, a, C, G, N, y, v0, w0, R, t_array):
+def find_x(A, a, C, G, N, y, v0, w0, P, t_array):
     """Returns estimation of x."""
     y_w0_dif = np.subtract(y, w0)
     GN = np.dot(np.transpose(G), N)
@@ -118,7 +194,8 @@ def find_x(A, a, C, G, N, y, v0, w0, R, t_array):
         G_time = calc_in_time_point(G, time)
         Gx = np.dot(G_time, x)
 
-        R_time = get_value_from_discrete_solution(R, time, t_array)
+        R_time = get_value_from_discrete_solution(P, time, t_array)
+        R_time = np.linalg.inv(R_time)
 
         GN_time = calc_in_time_point(GN, time)
         RGN = np.dot(R_time, GN_time)
@@ -135,6 +212,7 @@ def find_x(A, a, C, G, N, y, v0, w0, R, t_array):
         return res
     sol = odeint(system, a, t_array)
     return sol
+
 
 def find_r(N, y, G, w0, mu, x, t_array):
     """Returns function r(t)."""
@@ -156,6 +234,17 @@ def find_r(N, y, G, w0, mu, x, t_array):
     sol = odeint(system, 0, t_array)
     return [mu**2 - el[0] for el in sol] # here should be minus
 
+# def solve(A, a, P0, C, M, N, y, G, v0, w0, mu, n, t_start, t_end, t_count):
+#     t_array = np.linspace(t_start, t_end, t_count)
+#     R = find_R(A, P0, C, M, G, N, n, t_array)
+#     x = find_x(A, a, C, G, N, y, v0, w0, R, t_array)
+#     r = find_r(N, y, G, w0, mu, x, t_array)
+#     P = np.empty_like(R)
+#     for i in range(len(t_array)):
+#         P[i] = np.dot(r[i], R[i])
+#     return t_array, x, P, get_error_func(R, r, t_array)
+
+
 def solve(A, a, P0, C, M, N, y, G, v0, w0, mu, n, t_start, t_end, t_count):
     t_array = np.linspace(t_start, t_end, t_count)
     R = find_R(A, P0, C, M, G, N, n, t_array)
@@ -163,8 +252,9 @@ def solve(A, a, P0, C, M, N, y, G, v0, w0, mu, n, t_start, t_end, t_count):
     r = find_r(N, y, G, w0, mu, x, t_array)
     P = np.empty_like(R)
     for i in range(len(t_array)):
-        P[i] = np.dot(r[i], R[i]) # maybe 1/r[i] ???
+        P[i] = np.dot(1/r[i], R[i])
     return t_array, x, P, get_error_func(R, r, t_array)
+
 
 def get_error_func(R, r, timestamps):
     """Returns error func.
