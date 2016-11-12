@@ -71,41 +71,45 @@ def main():
     ]
 
     v0 = [
-        Operable(lambda t: t),
-        Operable(lambda t: t**2)
+        0,
+        0
     ]
     # set up shape matrix for bounding ellipsoid for v(t)
     M = [
-        [Operable(lambda t: t**2+t*16 + 1), Operable(lambda t: t**2+t*8)],
-        [Operable(lambda t: t**2+t*8), Operable(lambda t: 4*t**2 + t + 1)]
+        [1, 0],
+        [0, 1]
     ]
 
     w0 = [
-        Operable(lambda t: t),
-        Operable(lambda t: 2*t),
-        Operable(lambda t: 0.5*t),
+        0,
+        0,
+        0,
+        0
     ]
     #set up shape matrix for bounding ellipsoid for w(t)
     N = [
-        [Operable(lambda t: 1/4), 0, 0],
-        [0, Operable(lambda t: 1/9), 0],
-        [0, 0, Operable(lambda t: 1)]
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
     ]
 
     # set up obesrvation equation
     G = [
-        [1, 1, 1, 1],
-        [1, 1, 1, 1],
-        [1, 1, 1, 1]
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
     ]
 
     y = [
-        Operable(lambda t: t**2),
-        Operable(lambda t: t),
-        Operable(lambda t: 3*t)
+        1,
+        1,
+        1,
+        1
     ]
 
-    mu = 16000 # mu = 4
+    mu = 4
 
     T_START = 0 # T_START - start of time
     T_END = 10  # T_END - end of time
