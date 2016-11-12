@@ -73,6 +73,7 @@ def plot_approximation_result(t_array, center_array, shape_matrix_array, coordin
     for t in range(t_len):
         center, shape_matrix = project_ellipsoid_to_subspace(center_array[t],\
             shape_matrix_array[t], initial_dimension, coordinates)
+        shape_matrix = np.linalg.inv(shape_matrix)
         plot_2d_ellipse_in_3d_space(axes, center, shape_matrix, t_array[t])
 
     plt.show()
