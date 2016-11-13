@@ -128,9 +128,14 @@ def main():
     # P = np.delete(P, 0, 0)
     # x = np.delete(x, 0, 0)
     # t_array = np.delete(t_array, 0)
-    plot_approximation_result(t_array, x, P, [0, 1], 'T', 'Y1', 'Y2')
+    f = open('error.txt', 'w')
     for time in t_array:
-        print(error_func(time))
+        f.write(str(error_func(time)))
+        f.write("\n")
+    f.flush();
+
+    plot_approximation_result(t_array, x, P, [0, 1], 'T', 'Y1', 'Y2')
+   
 
 
 main()
