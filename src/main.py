@@ -117,10 +117,9 @@ def main():
     for time in t_array:
         f.write(str(error_func(time)))
         f.write("\n")
-    f.flush();
+    f.flush()
 
     plot_approximation_result(t_array, x, P, [0, 1], 'T', 'Y1', 'Y2')
-   
 
 
 main()
