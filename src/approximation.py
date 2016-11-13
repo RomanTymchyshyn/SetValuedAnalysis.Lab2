@@ -160,8 +160,8 @@ def solve(A, a, P0, C, M, N, y, G, v0, w0, mu, n, t_start, t_end, t_count):
     r = find_r(N, y, G, w0, mu, x, t_array)
     P = np.empty_like(R)
     for i in range(len(t_array)):
-    return t_array, x, P, get_error_func(R, r, t_array)
         P[i] = np.dot(r[i], R[i])
+    return t_array, x, P, get_error_func(P, r, t_array)
 
 
 def get_error_func(R, r, timestamps):
@@ -174,6 +174,6 @@ def get_error_func(R, r, timestamps):
         R_time = get_value_from_discrete_solution(R, time, timestamps)
         r_time = get_value_from_discrete_solution(r, time, timestamps)
         max_eig = max(np.linalg.eigvalsh(R_time))
-        return math.sqrt(r_time * max_eig)
+        return 1 / math.sqrt(max_eig) if max_eig > 0 else 0
     return error_func
      
