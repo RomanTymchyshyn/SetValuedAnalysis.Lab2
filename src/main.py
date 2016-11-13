@@ -70,44 +70,29 @@ def main():
         [0, -1/M2]
     ]
 
-    v0 = [
-        0,
-        0
-    ]
+    v0 = [0, 0]
     # set up shape matrix for bounding ellipsoid for v(t)
     M = [
         [1, 0],
         [0, 1]
     ]
 
-    w0 = [
-        0,
-        0,
-        0,
-        0
-    ]
+    w0 = [Operable(lambda t: t**2), Operable(lambda t: t**3), Operable(lambda t: 2*t)]
     #set up shape matrix for bounding ellipsoid for w(t)
     N = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [Operable(lambda t: t), 0, 0],
+        [0, Operable(lambda t: t), 0],
+        [0, 0, Operable(lambda t: t)]
     ]
 
     # set up obesrvation equation
     G = [
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, 1]
+        [1, 1, 1, 1],
+        [0, 1, 1, 0],
+        [1, 0, 1, 1]
     ]
 
-    y = [
-        1,
-        1,
-        1,
-        1
-    ]
+    y = [Operable(lambda t: t), Operable(lambda t: t), Operable(lambda t: t)]
 
     mu = 4
 
