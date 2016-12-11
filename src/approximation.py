@@ -175,7 +175,8 @@ def get_error_func(R, r, timestamps):
         """Error function."""
         R_time = get_value_from_discrete_solution(R, time, timestamps)
         r_time = get_value_from_discrete_solution(r, time, timestamps)
-        max_eig = max(np.linalg.eigvalsh(R_time))
+        e_vals, e_vecs = np.linalg.eig(R_time)
+        max_eig = min(e_vals)
         return 1 / math.sqrt(max_eig) if max_eig > 0 else 0
     return error_func
      
