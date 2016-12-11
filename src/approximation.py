@@ -1,6 +1,8 @@
-"""This module provides functionality for finding approximation of reachable set.
+"""This module provides functionality for finding information set and estimation of system state.
 
 Considered model is x'(t) = A(t)*x(t) + C(t)u(t).
+y(t) = G(t)*x(t) + w(t)
+
 t belongs to [t0, t1]
 x(t0) belongs to start set M0, which is ellipsoid
 u(t) - control function, which belongs to U(t)
