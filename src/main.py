@@ -100,19 +100,9 @@ def main():
     T_END = 10  # T_END - end of time
     T_COUNT = 50  # T_COUNT - number of timestamps on [t_start, t_end]
 
-    # tt = np.linspace(T_START, T_END, T_COUNT)
-    # mm = np.all([np.all(np.linalg.eigvals(calc_in_time_point(M, time)) > 0) for time in tt])
-    # nn = np.all([np.all(np.linalg.eigvals(calc_in_time_point(N, time)) > 0) for time in tt])
-    # print(mm)
-    # print(nn)
-
-    # plot_matr(tt, v0, M, 2, [0, 1])
     # plot_matr(tt, w0, N, 2, [0, 1])
     t_array, x, P, error_func = solve(A, A0, P0, C, M, N, y, G, v0, w0, mu, n, T_START, T_END, T_COUNT)
 
-    # P = np.delete(P, 0, 0)
-    # x = np.delete(x, 0, 0)
-    # t_array = np.delete(t_array, 0)
     f = open('error.txt', 'w')
     for time in t_array:
         f.write(str(error_func(time)))
